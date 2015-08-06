@@ -1,0 +1,20 @@
+{
+  "name": "eye-chrome",
+  "version": "0.0.0",
+  "authors": [
+    "dotch <christian.x.weiss@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "c3": "~0.4.10",
+    "lodash": "~3.10.1"
+  }
+}
