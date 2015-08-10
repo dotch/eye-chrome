@@ -44,10 +44,11 @@ Controller.prototype.saveQuestionData = function(answers) {
       data.answerText = answers[i];
     }
     data.createdAt = Date.now();
-    chrome.runtime.sendMessage(data, function (response) {
-      console.log(response);
+    chrome.storage.sync.get('questionData', function(stored) {
+      var questionData = stored['questionData'] || [];
+      questionData.push(data);
+      chrome.storage.sync.set({ 'questionData': questionData });
     });
-    console.log('save', this.questions[i]);
   }
 };
 
