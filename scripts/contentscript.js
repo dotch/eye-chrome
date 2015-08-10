@@ -1,24 +1,26 @@
 'use strict';
 
-//function initializeEyeBall() {
-//  var eye = document.createElement('div');
-//  eye.style.width = '16px';
-//  eye.style.height = '16px';
-//  eye.style.position = 'absolute';
-//  eye.style.backgroundColor = 'red';
-//  eye.style.borderRadius = '100%';
-//  eye.style.overflow = 'hidden';
-//  eye.style.pointerEvents = 'none';
-//  document.body.appendChild(eye);
-//}
-
 function contains(rect, x, y) {
   return rect.left < x && rect.right > x && rect.top < y && rect.bottom > y;
 }
 
-function Controller() {
+function Controller(showEyePos) {
   this.prevEl = null;
   this.questions = [];
+  this.showEyePos = showEyePos;
+
+  if (showEyePos) {
+    this.eye = document.createElement('div');
+    this.eyeRadius = 8;
+    this.eye.style.width = this.eyeRadius*2;
+    this.eye.style.height = this.eyeRadius*2;
+    this.eye.style.position = 'absolute';
+    this.eye.style.backgroundColor = 'red';
+    this.eye.style.borderRadius = '100%';
+    this.eye.style.overflow = 'hidden';
+    this.eye.style.pointerEvents = 'none';
+    document.body.appendChild(this.eye);
+  }
 }
 
 Controller.prototype.handlePosition = function(x, y) {
@@ -34,6 +36,10 @@ Controller.prototype.handlePosition = function(x, y) {
     } else if (contains(boundingRectAnswer, x, y)) {
       this.prevEl = q.answerElement;
     }
+  }
+  if (this.showEyePos) {
+    this.eye.style.left = x - this.eyeRadius;
+    this.eye.style.top = y - this.eyeRadius;
   }
 };
 
@@ -64,16 +70,16 @@ Controller.prototype.initialize = function(questionsArray) {
 var ctrl;
 var site;
 var tracker;
-if (window.location.origin.indexOf('survey.medien.ifi.lmu') !== -1)  {
-  // LimeSurvey
-  console.log('lmu limesurvey detected');
-  ctrl = new Controller();
-  site = new Limesurvey(ctrl);
-  tracker = new MouseTracker(ctrl);
-} else if (window.location.origin.indexOf('unipark') !== -1) {
-  // Unipark
-  console.log('unipark detected');
-  ctrl = new Controller();
-  site = new Unipark(ctrl);
-  tracker = new MouseTracker(ctrl);
+var isLimeSurvey = window.location.origin.indexOf('survey.medien.ifi.lmu') !== -1;
+var isUniPark = window.location.origin.indexOf('unipark') !== -1;
+
+if (isLimeSurvey || isUniPark) {
+  chrome.storage.sync.get('options', function(data) {
+    var options = data['options'] || {};
+    var useMouse = !!options['useMouse'];
+    var showEyePos = !!options['showEyePos'];
+    ctrl = new Controller(showEyePos);
+    site = isLimeSurvey ? new Limesurvey(ctrl) : new Unipark(ctrl);
+    tracker = useMouse ? new MouseTracker(ctrl) : new EyeTracker(ctrl);
+  });
 }

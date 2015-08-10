@@ -1,19 +1,33 @@
 <html>
-  <head></head>
+  <head>
+    <link rel="stylesheet" href="scripts/lib/bootstrap/dist/css/bootstrap.css"/>
+    <link href="styles/main.css" rel="stylesheet">
+  </head>
   <body>
-    Tracking Device:
-    <select name="device" id="device">
-      <option value="mouse">Mouse</option>
-      <option value="eye-tracker">Eye Tracker</option>
-    </select>
-    Debug Mode
-    <label for="debug">
-      <input type="checkbox" id="debug"/>
-    </label>
-    <div id="status"></div>
-    <button id="save">
-      Save
-    </button>
+    <div class="container">
+      <h3>Debug Settings</h3>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="show-eye-pos" value=""/>
+          Show Eye Position.
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="use-mouse" value=""/>
+          Use mouse cursor position to simulate Eye Tracking.
+        </label>
+      </div>
+
+      <div class="alert alert-info hidden" role="alert" id="indicator">
+        Settings have been saved.
+      </div>
+      <button id="save" class="btn btn-default">
+        Save
+      </button>
+    </div>
+
+
     <script src="scripts/options.js"></script>
   </body>
 </html>
