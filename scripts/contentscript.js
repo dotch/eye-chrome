@@ -44,21 +44,24 @@ Controller.prototype.handlePosition = function(x, y) {
 };
 
 Controller.prototype.saveQuestionData = function(answers) {
-  for (var i = 0; i < this.questions.length; i++) {
-    var data = this.questions[i];
-    if (answers) {
-      data.answerText = answers[i];
-    }
-    data.createdAt = Date.now();
-    chrome.storage.sync.get('questionData', function(stored) {
-      var questionData = stored['questionData'] || [];
+  var length = this.questions.length;
+  var questions = this.questions;
+  chrome.storage.sync.get('questionData', function(stored) {
+    var questionData = stored['questionData'] || [];
+    for (var i = 0; i < length; i++) {
+      var data = questions[i];
+      if (answers) {
+        data.answerText = answers[i];
+      }
+      data.createdAt = Date.now();
       questionData.push(data);
-      chrome.storage.sync.set({ 'questionData': questionData });
-    });
-  }
+    }
+    chrome.storage.sync.set({ 'questionData': questionData });
+  });
 };
 
 Controller.prototype.initialize = function(questionsArray) {
+  console.log('initializing', questionsArray);
   this.questions = questionsArray;
   this.questions.forEach(function(q){
     q.fixations = 0;
