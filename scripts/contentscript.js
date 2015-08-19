@@ -12,8 +12,8 @@ function Controller(showEyePos) {
   if (showEyePos) {
     this.eye = document.createElement('div');
     this.eyeRadius = 8;
-    this.eye.style.width = this.eyeRadius*2;
-    this.eye.style.height = this.eyeRadius*2;
+    this.eye.style.width = this.eyeRadius * 2 + 'px';
+    this.eye.style.height = this.eyeRadius * 2 + 'px';
     this.eye.style.position = 'absolute';
     this.eye.style.backgroundColor = 'red';
     this.eye.style.borderRadius = '100%';
@@ -24,6 +24,7 @@ function Controller(showEyePos) {
 }
 
 Controller.prototype.handlePosition = function(x, y) {
+  //console.log(x,y);
   for (var i = 0; i < this.questions.length; i++) {
     var q = this.questions[i];
     var boundingRectQuestion = q.questionElement.getBoundingClientRect();
@@ -38,8 +39,8 @@ Controller.prototype.handlePosition = function(x, y) {
     }
   }
   if (this.showEyePos) {
-    this.eye.style.left = x - this.eyeRadius;
-    this.eye.style.top = y - this.eyeRadius;
+    this.eye.style.left = x - this.eyeRadius + 'px';
+    this.eye.style.top = y - this.eyeRadius + 'px';
   }
 };
 
@@ -53,9 +54,21 @@ Controller.prototype.saveQuestionData = function(answers) {
       if (answers) {
         data.answerText = answers[i];
       }
+      data.fixationsRelative = data.fixations / data.questionText.length;
       data.createdAt = Date.now();
-      questionData.push(data);
+      questionData.push({
+        fixationsRelative: data.fixationsRelative,
+        fixations: data.fixations,
+        answerText: data.answerText,
+        jumps: data.jumps,
+        createdAt: data.createdAt,
+        questionId: data.questionId,
+        questionText: data.questionText,
+        questionType: data.questionType,
+        questionTypeDetail: data.questionTypeDetail
+      });
     }
+    console.log(questionData);
     chrome.storage.sync.set({ 'questionData': questionData });
   });
 };
@@ -82,7 +95,7 @@ if (isLimeSurvey || isUniPark) {
     var useMouse = !!options['useMouse'];
     var showEyePos = !!options['showEyePos'];
     ctrl = new Controller(showEyePos);
-    site = isLimeSurvey ? new Limesurvey(ctrl) : new Unipark(ctrl);
+    site = isLimeSurvey ? new Limesurvey(ctrl, true) : new Unipark(ctrl);
     tracker = useMouse ? new MouseTracker(ctrl) : new EyeTracker(ctrl);
   });
 }

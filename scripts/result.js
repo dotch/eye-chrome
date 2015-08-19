@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateData() {
     chrome.storage.sync.get('questionData', function(stored) {
       var data = stored['questionData'] || [];
+      var avgFixations = data.reduce(function(prev, curr, idx, arr) {
+          console.log(curr, prev);
+          return prev + (curr.fixationsRelative);
+        }, 0) / data.length;
+      var avgJumps = data.reduce(function(prev, curr, idx, arr) {
+          return prev + curr.jumps;
+        }, 0) / data.length;
       var htmlString =
         '<tr>' +
         '<th>Question</th>' +
@@ -28,29 +35,23 @@ document.addEventListener('DOMContentLoaded', function() {
         '</tr>';
       for (var i = 0; i < data.length; i++) {
         var questionData = data[i];
+        htmlString += questionData.fixationsRelative > avgFixations ?  '<tr style="color: red">' : '<tr>';
         htmlString +=
-          '<tr>' +
           '<td>' + questionData.questionId + '</td>' +
           '<td>' + questionData.questionText + '</td>' +
           '<td>' + questionData.questionType + '</td>' +
           '<td>' + questionData.questionTypeDetail + '</td>' +
           '<td>' + questionData.answerText + '</td>' +
-          '<td>' + questionData.fixations / questionData.questionText.length + '</td>' +
+          '<td>' + questionData.fixationsRelative.toFixed(4) + '</td>' +
           '<td>' + questionData.jumps + '</td>' +
           '<td><button class="delete-button" data-index="' + i + '">delete</button></td>' +
           '</tr>';
       }
       if (data.length) {
-        var avgFixations = data.reduce(function(prev, curr, idx, arr) {
-            return prev + (curr.fixations / curr.questionText.length);
-          }, 0) / data.length;
-        var avgJumps = data.reduce(function(prev, curr, idx, arr) {
-            return prev + curr.jumps;
-          }, 0) / data.length;
         htmlString +=
           '<tr>' +
           '<td colspan="5">Average</td>' +
-          '<td>' + avgFixations + '</td>' +
+          '<td>' + avgFixations.toFixed(4) + '</td>' +
           '<td>' + avgJumps + '</td>' +
           '<td></td>' +
           '</tr>';
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var chartArea = document.querySelector('#charts');
       chartArea.innerHTML = '';
       if (data.length) {
-        drawChart(['fixations'].concat(_.pluck(data, 'fixations')), avgFixations, _.pluck(data, 'questionId'));
+        drawChart(['fixations'].concat(_.pluck(data, 'fixationsRelative')), avgFixations, _.pluck(data, 'questionId'));
         drawChart(['jumps'].concat(_.pluck(data, 'jumps')), avgJumps, _.pluck(data, 'questionId'));
       }
     });

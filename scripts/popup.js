@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             '<tr>' +
             '<td>' + questionData.questionId + '</td>' +
             '<td>' + questionData.questionType + '</td>' +
-            '<td>' + questionData.fixations / questionData.questionText.length + '</td>' +
+            '<td>' + questionData.fixationsRelative + '</td>' +
             '<td>' + questionData.jumps + '</td>' +
             '</tr>';
         }

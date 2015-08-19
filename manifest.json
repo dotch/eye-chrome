@@ -19,9 +19,11 @@
         "<all_urls>"
       ],
       "js": [
+        "scripts/lib/socketio-client.js",
         "scripts/sites/unipark.js",
         "scripts/sites/limesurvey.js",
         "scripts/trackers/mouse.js",
+        "scripts/trackers/eye.js",
         "scripts/contentscript.js"
       ],
       "run_at": "document_idle",

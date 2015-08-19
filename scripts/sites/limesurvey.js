@@ -1,5 +1,13 @@
-function Limesurvey(ctrl) {
+function Limesurvey(ctrl, increaseFontSize) {
 
+
+  if (increaseFontSize) {
+    document.body.style.fontSize = '22px';
+    var ths = document.querySelectorAll('table.question th');
+    for (var th = 0; th < ths.length; th++) {
+      ths[th].style.fontSize = '16px';
+    }
+  }
 
   var questionContainers = document.querySelectorAll('.group > div > table.question');
   var questions = [];
